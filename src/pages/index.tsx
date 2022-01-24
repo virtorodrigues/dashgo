@@ -1,6 +1,6 @@
 import { Button, Flex, FormControl, FormLabel, Stack } from '@chakra-ui/react'
 import Head from 'next/head'
-import { Input } from './components/Form/Input'
+import Input from '../components/Form/Input'
 
 export default function SignIn() {
   return (
