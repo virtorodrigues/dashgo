@@ -1,38 +1,50 @@
-import { Box, Button, Checkbox, Flex, Heading, Icon, Spinner, Table, Tbody, Td, Text, Th, Thead, Tr, useBreakpointValue } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Flex,
+  Heading,
+  Icon,
+  Link as ChakraLink,
+  Spinner,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+
 import Link from "next/link";
-import { useEffect } from "react";
+import { useState } from "react";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
-import { useQuery } from "react-query";
 
 import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import Sidebar from "../../components/Sidebar";
+import { api } from "../../services/api";
+import { useUsers } from "../../services/hooks/useUsers";
+import { queryClient } from "../../services/queryClient";
 
 export default function UserList() {
-  const { data, isLoading, error, isFetching } = useQuery('users', async () => {
-    const response = await fetch('http://localhost:3000/api/users');
-    const data = await response.json();
-
-    const users = data.users.map(user => ({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      }),
-    }))
-
-    return users;
-  }, {
-    staleTime: 1000 * 5, //5 seconds
-  });
+  const [page, setPage] = useState(1);
+  const { data, isLoading, error, isFetching, refetch } = useUsers(page);
 
   const isWideVersion = useBreakpointValue({
     base: false,
     md: true,
   });
+
+  async function handlePrefetchUser(userId: string) {
+    await queryClient.prefetchQuery(['user', userId], async () => {
+      const response = await api.get(`user/${userId}`);
+      return response.data;
+    }, {
+      staleTime: 1000 * 60 * 10, //10 minutes
+    });
+  }
 
   return (
     <Box>
@@ -98,14 +110,16 @@ export default function UserList() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {data.map(user => (
+                  {data.users.map(user => (
                     <Tr key={user.id}>
                       <Td px={["4", "4", "6"]}>
                         <Checkbox colorScheme="pink" />
                       </Td>
                       <Td>
                         <Box>
-                          <Text fontWeight="bold">{user.name}</Text>
+                          <ChakraLink color="purple.300" onMouseEnter={() => handlePrefetchUser(user.id)}>
+                            <Text fontWeight="bold">{user.name}</Text>
+                          </ChakraLink>
                           <Text fontSize="sm" color="gray.300">{user.email}</Text>
                         </Box>
                       </Td>
@@ -134,7 +148,11 @@ export default function UserList() {
                 </Tbody>
               </Table >
 
-              <Pagination />
+              <Pagination
+                totalCountOfRegisters={data.totalCount}
+                currentPage={page}
+                onPageChange={setPage}
+              />
             </>
           )}
 
