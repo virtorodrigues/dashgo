@@ -16,6 +16,7 @@ import {
   Tr,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import { GetServerSideProps } from "next";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -25,12 +26,15 @@ import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import Sidebar from "../../components/Sidebar";
 import { api } from "../../services/api";
-import { useUsers } from "../../services/hooks/useUsers";
+import { getUsers, useUsers } from "../../services/hooks/useUsers";
 import { queryClient } from "../../services/queryClient";
 
+//export default function UserList({ users }) {
 export default function UserList() {
   const [page, setPage] = useState(1);
-  const { data, isLoading, error, isFetching, refetch } = useUsers(page);
+  const { data, isLoading, error, isFetching, refetch } = useUsers(page, {
+    //initialData: users
+  });
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -161,3 +165,15 @@ export default function UserList() {
     </Box >
   )
 }
+/*
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  //const { users, totalCount } = await getUsers(1);
+
+  return {
+    props: {
+      // users,
+      // totalCount,
+    }
+  }
+}*/
