@@ -7,7 +7,7 @@ const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false
 });
 
-const dasdas = {
+const options = {
   chart: {
     toolbar: {
       show: false,
@@ -27,7 +27,7 @@ const dasdas = {
     enabled: false,
   },
   xaxis: {
-    type: 'datetime',
+    types: 'datetime',
     axisBorder: {
       color: theme.colors.gray[600]
     },
@@ -89,7 +89,7 @@ export default function Dashboard() {
             pb="4"
           >
             <Text fontSize="lg" mb="4">Inscritos da semana</Text>
-            <Chart options={dasdas} series={series} type="area" height={160} />
+            <Chart options={options} series={series} type="area" height={160} />
           </Box>
           <Box
             p={["6", "8"]}
@@ -97,7 +97,7 @@ export default function Dashboard() {
             borderRadius={8}
           >
             <Text fontSize="lg" mb="4">Taxa de abertura</Text>
-            <Chart options={dasdas} series={series} type="area" height={160} />
+            <Chart options={options} series={series} type="area" height={160} />
 
           </Box>
         </SimpleGrid>
