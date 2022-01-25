@@ -18,7 +18,7 @@ type CreateUserFormData = {
 export default function CreateUser() {
 
   const createUserFormSchema = yup.object({
-    name: yup.string().required('Nome obrigatório').email('E-mail com formato inválido'),
+    name: yup.string().required('Nome obrigatório'),
     email: yup.string().required('E-mail obrigatório').email('E-mail com formato inválido'),
     password: yup.string().required('Senha obrigatória').min(6, 'No mínimo 6 caracteres'),
     password_confirmation:
